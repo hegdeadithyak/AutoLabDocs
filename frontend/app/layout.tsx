@@ -2,12 +2,30 @@ import "@/app/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Inter } from "next/font/google"
 import { cn } from "@/lib/utils"
+import { Metadata } from "next"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "AutoLabDocs - Convert Jupyter Notebooks to Beautiful Documents",
   description: "Transform your Jupyter notebooks to beautifully formatted DOCX and PDF documents with just a few clicks.",
+  icons: {
+    icon: [
+      {
+        url: "/autolabdocs_logo.svg",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/favicon.ico",
+        sizes: "any",
+      }
+    ],
+    apple: {
+      url: "/icons/apple-touch-icon.png",
+      sizes: "180x180",
+    },
+  },
+  manifest: "/manifest.json",
 }
 
 export default function RootLayout({
