@@ -9,11 +9,11 @@ import { Readable } from "stream"
 async function generateCodeImage(code: string, options: any = {}) {
   const {
     fontFamily = "monospace",
-    fontSize = 16,
-    lineHeight = 24,
+    fontSize = 18,               // Increased font size for better readability
+    lineHeight = 28,             // Increased line height for better spacing
     backgroundColor = "#171C2E", // Carbon.sh dark blue background
     textColor = "#FFFFFF",       // Brighter white text for better contrast
-    lineNumberColor = "#3A3A3A", // Darker line numbers
+    lineNumberColor = "#6272A4", // More visible line numbers
     syntaxColors = {
       keyword: "#FF79C6",      // Pink for keywords
       string: "#F1FA8C",       // Yellow for strings
@@ -30,6 +30,7 @@ async function generateCodeImage(code: string, options: any = {}) {
   } = options
 
   const lines = code.split("\n")
+  const lineCount = lines.length
 
   // Create a temporary canvas context for measurements
   const tmpCanvas = createCanvas(0, 0)
@@ -37,7 +38,7 @@ async function generateCodeImage(code: string, options: any = {}) {
   tmpCtx.font = `${fontSize}px ${fontFamily}`
 
   // Compute the width needed for line numbers
-  const lineNumbersWidth = tmpCtx.measureText(String(lines.length)).width + 30
+  const lineNumbersWidth = tmpCtx.measureText(String(lines.length)).width + 40
 
   // Determine maximum width of code lines
   let maxWidth = 0
@@ -46,24 +47,53 @@ async function generateCodeImage(code: string, options: any = {}) {
     if (textWidth > maxWidth) maxWidth = textWidth
   }
 
+  // Ensure a minimum width for very short lines
+  maxWidth = Math.max(maxWidth, 300)
+
   // Window header height
   const headerHeight = 40
   
-  // Calculate canvas dimensions
-  const canvasWidth = padding * 2 + lineNumbersWidth + maxWidth
-  const canvasHeight = padding * 2 + lines.length * lineHeight + headerHeight
-
+  // Calculate canvas dimensions - ensure reasonable proportions
+  const canvasWidth = Math.min(Math.max(padding * 2 + lineNumbersWidth + maxWidth, 400), 1200) 
+  // Adjust height based on line count but keep it reasonable
+  const canvasHeight = padding * 2 + Math.min(lines.length, 50) * lineHeight + headerHeight
+  
   // Create the final canvas
   const canvas = createCanvas(canvasWidth, canvasHeight)
   const ctx = canvas.getContext("2d")
 
-  // Draw background with rounded corners (simulating by filling a rect and then drawing a border)
+  // Apply rounded corners - proper Carbon.sh look
   ctx.fillStyle = backgroundColor
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight)
+  ctx.beginPath()
+  ctx.moveTo(cornerRadius, 0)
+  ctx.lineTo(canvasWidth - cornerRadius, 0)
+  ctx.quadraticCurveTo(canvasWidth, 0, canvasWidth, cornerRadius)
+  ctx.lineTo(canvasWidth, canvasHeight - cornerRadius)
+  ctx.quadraticCurveTo(canvasWidth, canvasHeight, canvasWidth - cornerRadius, canvasHeight)
+  ctx.lineTo(cornerRadius, canvasHeight)
+  ctx.quadraticCurveTo(0, canvasHeight, 0, canvasHeight - cornerRadius)
+  ctx.lineTo(0, cornerRadius)
+  ctx.quadraticCurveTo(0, 0, cornerRadius, 0)
+  ctx.closePath()
+  ctx.fill()
   
   // Draw window header
   ctx.fillStyle = "#1A1E30" // Slightly lighter than background
-  ctx.fillRect(0, 0, canvasWidth, headerHeight)
+  ctx.beginPath()
+  ctx.moveTo(cornerRadius, 0)
+  ctx.lineTo(canvasWidth - cornerRadius, 0)
+  ctx.quadraticCurveTo(canvasWidth, 0, canvasWidth, cornerRadius)
+  ctx.lineTo(canvasWidth, headerHeight)
+  ctx.lineTo(0, headerHeight)
+  ctx.lineTo(0, cornerRadius)
+  ctx.quadraticCurveTo(0, 0, cornerRadius, 0)
+  ctx.closePath()
+  ctx.fill()
+  
+  // Add "ipynb" text to header like Carbon.sh filename
+  ctx.fillStyle = "#6272A4"
+  ctx.font = `${fontSize - 2}px ${fontFamily}`
+  ctx.fillText("ipynb", canvasWidth / 2 - 20, headerHeight / 2 + 4)
   
   // Draw window control dots
   const dotColors = ["#FF5F56", "#FFBD2E", "#27C93F"] // Red, Yellow, Green
@@ -76,28 +106,19 @@ async function generateCodeImage(code: string, options: any = {}) {
     ctx.fill()
   })
   
-  // Draw a subtle grid pattern in the background for extra Carbon.sh effect
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.03)"
-  ctx.lineWidth = 1
-  const gridSize = 20
+  // NOTE: Grid pattern removed to improve text visibility
   
-  for (let x = padding; x < canvasWidth - padding; x += gridSize) {
-    ctx.beginPath()
-    ctx.moveTo(x, headerHeight + padding)
-    ctx.lineTo(x, canvasHeight - padding)
-    ctx.stroke()
-  }
-  
-  for (let y = headerHeight + padding; y < canvasHeight - padding; y += gridSize) {
-    ctx.beginPath()
-    ctx.moveTo(padding, y)
-    ctx.lineTo(canvasWidth - padding, y)
-    ctx.stroke()
-  }
-
-  // Set text properties
-  ctx.font = `${fontSize}px ${fontFamily}`
+  // Set text properties - use a slightly bold font weight for better visibility
+  ctx.font = `bold ${fontSize}px ${fontFamily}`
   ctx.textBaseline = "top"
+
+  // Create a vertical separator line between line numbers and code
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.1)"
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(padding + lineNumbersWidth - 15, headerHeight)
+  ctx.lineTo(padding + lineNumbersWidth - 15, canvasHeight)
+  ctx.stroke()
 
   // Render each line with line numbers and syntax highlighting
   const codeStartX = padding + lineNumbersWidth
@@ -107,22 +128,32 @@ async function generateCodeImage(code: string, options: any = {}) {
     // Draw line number
     ctx.fillStyle = lineNumberColor
     const lineNumber = String(index + 1)
-    ctx.fillText(lineNumber, padding, y)
+    ctx.fillText(lineNumber, padding + (lineNumbersWidth - 40) / 2, y)
     
-    // Basic syntax highlighting (simplified)
-    // In a real implementation, you would need a proper tokenizer
+    // Basic syntax highlighting with improved text clarity
     let x = codeStartX
     let segments = highlightSyntax(line, syntaxColors)
     
     for (const segment of segments) {
       ctx.fillStyle = segment.color
+      // Add a subtle text shadow for better visibility
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
+      ctx.shadowBlur = 2
+      ctx.shadowOffsetX = 1
+      ctx.shadowOffsetY = 1
       ctx.fillText(segment.text, x, y)
+      ctx.shadowColor = 'transparent' // Reset shadow for next segment
       x += ctx.measureText(segment.text).width
     }
   })
 
   // Return the canvas as a PNG buffer
-  return canvas.toBuffer()
+  return {
+    buffer: canvas.toBuffer(),
+    width: canvasWidth,
+    height: canvasHeight,
+    lineCount
+  }
 }
 
 // Simple syntax highlighting helper
@@ -271,13 +302,13 @@ async function createPdfFromNotebook(notebookData: any) {
         if (code.trim()) {
           try {
             // Generate a styled code image with Carbon.sh styling
-            const imgBuffer = await generateCodeImage(code, {
+            const imgResult = await generateCodeImage(code, {
               fontFamily: "monospace",
-              fontSize: 16,
-              lineHeight: 24,
+              fontSize: 18,
+              lineHeight: 28,
               backgroundColor: "#171C2E", // Carbon.sh dark blue background
               textColor: "#FFFFFF",       // Brighter white text
-              lineNumberColor: "#3A3A3A", // Darker line numbers
+              lineNumberColor: "#6272A4", // More visible line numbers
               syntaxColors: {
                 keyword: "#FF79C6",      // Pink for keywords
                 string: "#F1FA8C",       // Yellow for strings
@@ -291,17 +322,40 @@ async function createPdfFromNotebook(notebookData: any) {
               padding: 32,               // More padding for a more spacious look
               windowControlSize: 12,     // Size of window control dots
               cornerRadius: 10,          // Rounded corner radius
-            })
+            });
 
-            // Add the image to the PDF
-            doc.image(imgBuffer, {
-              fit: [500, 700],
+            // Scale image size based on line count
+            // Keep the aspect ratio but limit size for both very small and very large code blocks
+            const aspectRatio = imgResult.width / imgResult.height;
+            
+            // Calculate appropriate dimensions based on line count
+            let fitWidth, fitHeight;
+            
+            if (imgResult.lineCount <= 5) {
+              // Small code snippets
+              fitWidth = 400;
+            } else if (imgResult.lineCount <= 15) {
+              // Medium code snippets
+              fitWidth = 450;
+            } else if (imgResult.lineCount <= 30) {
+              // Larger code snippets
+              fitWidth = 500;
+            } else {
+              // Very large code snippets
+              fitWidth = 550;
+            }
+            
+            fitHeight = fitWidth / aspectRatio;
+
+            // Add the image to the PDF with appropriate sizing
+            doc.image(imgResult.buffer, {
+              fit: [fitWidth, fitHeight],
               align: "center",
-            })
+            });
 
-            doc.moveDown(2)
+            doc.moveDown(2);
           } catch (err) {
-            console.error("Error processing cell:", err)
+            console.error("Error processing cell:", err);
             // Continue with other cells if one fails
           }
         }
