@@ -1,0 +1,54 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="url(#grad1)" />
+  <circle cx="100" cy="100" r="90" stroke="white" stroke-width="2" stroke-opacity="0.2" fill="none" />
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1" />
+      <stop offset="100%" style="stop-color:#A855F7" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF" />
+      <stop offset="100%" style="stop-color:#F3F4F6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Notebook Icon -->
+  <rect x="60" y="60" width="80" height="100" rx="8" fill="url(#grad2)" stroke="#6366F1" stroke-width="3" />
+  
+  <!-- Notebook Lines -->
+  <line x1="75" y1="80" x2="125" y2="80" stroke="#A855F7" stroke-width="3" />
+  <line x1="75" y1="95" x2="125" y2="95" stroke="#A855F7" stroke-width="3" />
+  <line x1="75" y1="110" x2="105" y2="110" stroke="#A855F7" stroke-width="3" />
+  <line x1="75" y1="125" x2="125" y2="125" stroke="#A855F7" stroke-width="3" />
+  <line x1="75" y1="140" x2="115" y2="140" stroke="#A855F7" stroke-width="3" />
+  
+  <!-- Arrow Transform -->
+  <g transform="translate(115, 120) rotate(-10)">
+    <path d="M0,0 L25,15 L0,30 z" fill="#6366F1" />
+    <rect x="23" y="10" width="20" height="10" rx="2" fill="#6366F1" />
+  </g>
+  
+  <!-- Document -->
+  <rect x="130" y="90" width="45" height="60" rx="4" fill="white" stroke="#6366F1" stroke-width="2" />
+  <line x1="140" y1="105" x2="165" y2="105" stroke="#A855F7" stroke-width="2" />
+  <line x1="140" y1="115" x2="165" y2="115" stroke="#A855F7" stroke-width="2" />
+  <line x1="140" y1="125" x2="165" y2="125" stroke="#A855F7" stroke-width="2" />
+  <line x1="140" y1="135" x2="155" y2="135" stroke="#A855F7" stroke-width="2" />
+  
+  <!-- Subtle Dots Pattern -->
+  <g opacity="0.2">
+    <circle cx="35" cy="50" r="1.5" fill="white" />
+    <circle cx="45" cy="65" r="1.5" fill="white" />
+    <circle cx="30" cy="80" r="1.5" fill="white" />
+    <circle cx="40" cy="95" r="1.5" fill="white" />
+    <circle cx="25" cy="110" r="1.5" fill="white" />
+    <circle cx="35" cy="125" r="1.5" fill="white" />
+    <circle cx="45" cy="140" r="1.5" fill="white" />
+    <circle cx="175" cy="50" r="1.5" fill="white" />
+    <circle cx="165" cy="65" r="1.5" fill="white" />
+    <circle cx="180" cy="80" r="1.5" fill="white" />
+  </g>
+</svg> 

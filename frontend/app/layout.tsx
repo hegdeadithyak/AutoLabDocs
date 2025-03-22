@@ -17,6 +17,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: `
+          .grid-background {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 20 0 L 0 0 0 20' stroke='white' stroke-width='0.5' opacity='0.2'/%3E%3C/pattern%3E%3Crect width='100' height='100' fill='url(%23grid)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            opacity: 0.015;
+          }
+        ` }}></style>
+      </head>
       <body className={cn(inter.className, "min-h-screen bg-background relative")}>
         {/* Animated background elements */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
@@ -28,7 +37,7 @@ export default function RootLayout({
           <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-purple-600/5 rounded-full blur-[180px] opacity-70 animate-float-delayed"></div>
           
           {/* Subtle grid pattern */}
-          <div className="absolute inset-0 bg-[url(/grid.svg)] bg-repeat opacity-[0.015]"></div>
+          <div className="absolute inset-0 grid-background"></div>
         </div>
         
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
@@ -38,5 +47,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-import './globals.css'
