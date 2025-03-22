@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, FileText, FileType } from "lucide-react"
+import { ArrowRight, FileText, FileType, Upload } from "lucide-react"
 import gsap from "gsap"
 
 export default function Hero() {
@@ -32,6 +32,13 @@ export default function Hero() {
     return () => ctx.revert()
   }, [])
 
+  const scrollToUpload = () => {
+    const uploadSection = document.getElementById('upload-section');
+    if (uploadSection) {
+      uploadSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section ref={heroRef} className="relative py-20 md:py-32 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background to-background/80 z-0"></div>
@@ -49,9 +56,9 @@ export default function Hero() {
               a few clicks.
             </p>
             <div ref={buttonRef} className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="group">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              <Button size="lg" className="group" onClick={scrollToUpload}>
+                Upload Notebook
+                <Upload className="ml-2 h-4 w-4 transition-transform group-hover:translate-y-[-2px]" />
               </Button>
               <Button size="lg" variant="outline">
                 Learn More
