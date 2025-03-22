@@ -1,161 +1,115 @@
 "use client"
 
+import { useRef } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { Github, Twitter, Linkedin } from "lucide-react"
-import { useEffect, useRef } from "react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 export default function Footer() {
   const footerRef = useRef<HTMLElement | null>(null)
-  const contentRef = useRef<HTMLDivElement | null>(null)
-  const logoRef = useRef<HTMLDivElement | null>(null)
-  const linksRef = useRef<HTMLDivElement | null>(null)
-  const socialRef = useRef<HTMLDivElement | null>(null)
-  const copyrightRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-    
-    const ctx = gsap.context(() => {
-      // Fade in the footer content with a staggered effect
-      gsap.from([logoRef.current, linksRef.current, socialRef.current, copyrightRef.current], {
-        opacity: 0,
-        y: 20,
-        stagger: 0.1,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: contentRef.current,
-          start: "top 90%",
-        },
-      })
-      
-      // Subtle hover animations for social buttons
-      const socialButtons = document.querySelectorAll('.social-button');
-      socialButtons.forEach(button => {
-        button.addEventListener('mouseenter', () => {
-          gsap.to(button, {
-            y: -5,
-            scale: 1.1,
-            duration: 0.3,
-            ease: "power2.out"
-          });
-        });
-        
-        button.addEventListener('mouseleave', () => {
-          gsap.to(button, {
-            y: 0,
-            scale: 1,
-            duration: 0.3,
-            ease: "power2.out"
-          });
-        });
-      });
-      
-      // Create glow effect
-      const glowTimeline = gsap.timeline({ repeat: -1 });
-      
-      glowTimeline
-        .to(".footer-bg-glow", { 
-          opacity: 0.6, 
-          x: "5%", 
-          y: "5%", 
-          duration: 15,
-          ease: "sine.inOut" 
-        })
-        .to(".footer-bg-glow", { 
-          opacity: 0.3, 
-          x: "-5%", 
-          y: "-5%", 
-          duration: 15,
-          ease: "sine.inOut" 
-        });
-    }, footerRef)
-    
-    return () => ctx.revert()
-  }, [])
+  const socialLinks = [
+    {
+      name: "GitHub",
+      href: "https://github.com/yourusername/autolabdocs",
+      icon: <Github className="h-5 w-5" />,
+    },
+    {
+      name: "Twitter",
+      href: "https://twitter.com/yourusername",
+      icon: <Twitter className="h-5 w-5" />,
+    },
+    {
+      name: "LinkedIn",
+      href: "https://linkedin.com/in/yourusername",
+      icon: <Linkedin className="h-5 w-5" />,
+    },
+  ]
+
+  const linkGroups = [
+    {
+      title: "Product",
+      links: [
+        { name: "Features", href: "#features" },
+        { name: "Pricing", href: "#pricing" },
+        { name: "FAQ", href: "#faq" },
+      ],
+    },
+    {
+      title: "Resources",
+      links: [
+        { name: "Documentation", href: "#" },
+        { name: "Tutorials", href: "#" },
+        { name: "Blog", href: "#" },
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        { name: "About", href: "#" },
+        { name: "Contact", href: "#" },
+        { name: "Privacy", href: "#" },
+        { name: "Terms", href: "#" },
+      ],
+    },
+  ]
 
   return (
-    <footer ref={footerRef} className="py-12 border-t border-white/10 relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="footer-bg-glow absolute bottom-0 right-0 w-[60%] h-[70%] bg-primary/5 rounded-full blur-[150px] opacity-30 -z-10"></div>
-      </div>
-      
-      <div ref={contentRef} className="container px-4 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div ref={logoRef} className="md:col-span-1">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">AL</span>
-              </div>
-              <span className="font-bold text-xl">AutoLabDocs</span>
+    <footer ref={footerRef} className="border-t border-white/10 bg-black">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 animate-fadeIn">
+          {/* Logo and description */}
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center mb-4">
+              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500 animate-gradient">
+                AutoLabDocs
+              </span>
             </div>
-            <p className="text-muted-foreground">
-              Effortlessly convert your Jupyter notebooks to professional documents
+            <p className="text-muted-foreground max-w-md mb-6">
+              Transform your Jupyter notebooks into beautifully formatted documents with a single click. Perfect for lab reports, assignments, and research documentation.
             </p>
-          </div>
-          
-          <div ref={linksRef} className="md:col-span-2 grid grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-semibold mb-3 text-lg">Product</h3>
-              <ul className="space-y-2">
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#features">Features</Link>
-                </li>
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#pricing">Pricing</Link>
-                </li>
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#">Documentation</Link>
-                </li>
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#">Releases</Link>
-                </li>
-              </ul>
-            </div>
             
-            <div>
-              <h3 className="font-semibold mb-3 text-lg">Support</h3>
-              <ul className="space-y-2">
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#">Help Center</Link>
-                </li>
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#">FAQ</Link>
-                </li>
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#">Contact</Link>
-                </li>
-                <li className="hover:text-primary transition-colors duration-200">
-                  <Link href="#">Privacy</Link>
-                </li>
-              </ul>
+            {/* Social links */}
+            <div className="flex space-x-4">
+              {socialLinks.map((social, index) => (
+                <Link
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  className="transition-all duration-300 hover:text-primary hover:scale-110 hover:rotate-5 transform p-2 rounded-full bg-white/5 hover:bg-white/10"
+                >
+                  {social.icon}
+                </Link>
+              ))}
             </div>
           </div>
-          
-          <div ref={socialRef} className="md:col-span-1">
-            <h3 className="font-semibold mb-3 text-lg">Connect</h3>
-            <div className="flex space-x-3">
-              <Button variant="ghost" size="icon" className="social-button rounded-full bg-foreground/5 hover:bg-foreground/10">
-                <Github className="h-5 w-5" />
-                <span className="sr-only">GitHub</span>
-              </Button>
-              <Button variant="ghost" size="icon" className="social-button rounded-full bg-foreground/5 hover:bg-foreground/10">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </Button>
-              <Button variant="ghost" size="icon" className="social-button rounded-full bg-foreground/5 hover:bg-foreground/10">
-                <Linkedin className="h-5 w-5" />
-                <span className="sr-only">LinkedIn</span>
-              </Button>
+
+          {/* Link sections */}
+          <div className="col-span-1 md:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {linkGroups.map((group, groupIndex) => (
+                <div key={groupIndex} className="animate-fadeIn" style={{ animationDelay: `${groupIndex * 100}ms` }}>
+                  <h3 className="font-medium mb-4">{group.title}</h3>
+                  <ul className="space-y-2">
+                    {group.links.map((link, linkIndex) => (
+                      <li key={linkIndex}>
+                        <Link
+                          href={link.href}
+                          className="text-muted-foreground transition-colors duration-200 hover:text-primary"
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        
-        <div ref={copyrightRef} className="border-t border-white/10 mt-12 pt-8 text-center text-sm text-muted-foreground">
+
+        <div className="mt-12 pt-6 border-t border-white/10 text-center text-sm text-muted-foreground animate-fadeIn" style={{ animationDelay: "300ms" }}>
           <p>© {new Date().getFullYear()} AutoLabDocs. All rights reserved.</p>
         </div>
       </div>

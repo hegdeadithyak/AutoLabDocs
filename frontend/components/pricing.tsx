@@ -1,288 +1,138 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Check } from "lucide-react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 export default function Pricing() {
   const pricingRef = useRef<HTMLElement | null>(null)
-  const titleRef = useRef<HTMLHeadingElement | null>(null)
-  const cardRefs = useRef<HTMLDivElement[]>([])
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-  // Reset card refs on re-render
-  cardRefs.current = []
-
-  // Add to card refs array
-  const addToCardRefs = (el: HTMLDivElement | null) => {
-    if (el && !cardRefs.current.includes(el)) {
-      cardRefs.current.push(el)
-    }
-  }
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-
-    const ctx = gsap.context(() => {
-      // Title animation
-      gsap.from(titleRef.current, {
-        opacity: 0,
-        y: 30,
-        duration: 0.8,
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: "top 80%",
-        },
-      })
-
-      // Cards animation with staggered effect
-      gsap.from(cardRefs.current, {
-        opacity: 0,
-        y: 60,
-        scale: 0.9,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: cardRefs.current[0],
-          start: "top 85%",
-        },
-        onComplete: () => {
-          // Highlight the premium plan after all cards are visible
-          setTimeout(() => {
-            if (cardRefs.current[1]) {
-              gsap.to(cardRefs.current[1], {
-                y: -15,
-                boxShadow: "0 30px 60px -12px rgba(0, 0, 0, 0.25)",
-                borderColor: "rgba(99, 102, 241, 0.5)",
-                duration: 0.5,
-                ease: "power2.out"
-              });
-              
-              // Animate the "most popular" badge
-              gsap.fromTo('.popular-badge', 
-                { opacity: 0, scale: 0, rotation: -5 },
-                { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.7)", delay: 0.2 }
-              );
-            }
-          }, 800);
-        }
-      });
-      
-      // Feature checks animation
-      gsap.from('.feature-check', {
-        scale: 0,
-        opacity: 0,
-        stagger: {
-          each: 0.05,
-          grid: "auto",
-          from: "start"
-        },
-        duration: 0.4,
-        ease: "back.out(1.7)",
-        delay: 1
-      });
-      
-      // Create glow effect
-      const glowTimeline = gsap.timeline({ repeat: -1 });
-      
-      glowTimeline
-        .to(".pricing-bg-glow", { 
-          opacity: 0.7, 
-          x: "5%", 
-          y: "5%", 
-          duration: 12,
-          ease: "sine.inOut" 
-        })
-        .to(".pricing-bg-glow", { 
-          opacity: 0.4, 
-          x: "-5%", 
-          y: "-5%", 
-          duration: 12,
-          ease: "sine.inOut" 
-        });
-    }, pricingRef)
-
-    return () => ctx.revert()
-  }, [])
-
-  const handleMouseEnter = (index: number) => {
-    if (isAnimating) return;
-    
-    setHoveredCard(index);
-    setIsAnimating(true);
-    
-    gsap.to(cardRefs.current[index], {
-      y: -10,
-      scale: 1.02,
-      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-      duration: 0.3,
-      ease: "power2.out",
-      onComplete: () => setIsAnimating(false)
-    });
-    
-    // Make other cards slightly fade out
-    cardRefs.current.forEach((card, i) => {
-      if (i !== index) {
-        gsap.to(card, {
-          opacity: 0.8,
-          scale: 0.98,
-          duration: 0.3,
-          ease: "power2.out"
-        });
-      }
-    });
-  }
-  
-  const handleMouseLeave = (index: number) => {
-    if (isAnimating) return;
-    
-    setHoveredCard(null);
-    setIsAnimating(true);
-    
-    // Reset all cards
-    cardRefs.current.forEach((card, i) => {
-      gsap.to(card, {
-        y: i === 1 ? -15 : 0, // Keep the premium plan elevated
-        opacity: 1,
-        scale: 1,
-        boxShadow: i === 1 ? "0 30px 60px -12px rgba(0, 0, 0, 0.25)" : "0 0 0 rgba(0, 0, 0, 0)",
-        duration: 0.3,
-        ease: "power2.out",
-        onComplete: () => {
-          if (i === index) {
-            setIsAnimating(false);
-          }
-        }
-      });
-    });
-  }
-
-  const plans = [
+  const tiers = [
     {
       name: "Free",
-      price: "Free",
-      description: "Basic features for testing and small projects.",
+      price: "$0",
+      description:
+        "Perfect for students and occasional use",
       features: [
-        "5 file conversions per day",
-        "Basic syntax highlighting",
-        "Standard formats",
-        "Manual downloads",
-        "Community support",
+        "10 conversions per month",
+        "Basic document formatting",
+        "Export to DOCX format",
+        "Standard code highlighting",
+        "Email support",
       ],
-      buttonText: "Get Started",
-      highlighted: false,
+      cta: "Get Started",
+      popular: false,
     },
     {
-      name: "Premium",
-      price: "$9.99",
+      name: "Pro",
+      price: "$9",
       period: "/month",
-      description: "Advanced features for students and professionals.",
+      description:
+        "Ideal for frequent users and professionals",
       features: [
-        "Unlimited file conversions",
-        "Enhanced syntax highlighting",
-        "Priority processing",
-        "Custom themes",
-        "Email support",
+        "Unlimited conversions",
+        "Advanced document formatting",
+        "Export to DOCX and PDF formats",
+        "Premium code highlighting",
+        "Priority email support",
+        "Custom document templates",
         "Batch processing",
       ],
-      buttonText: "Start Pro Trial",
-      highlighted: true,
-      badge: "Most Popular"
+      cta: "Start Free Trial",
+      popular: true,
     },
     {
       name: "Team",
-      price: "$24.99",
+      price: "$49",
       period: "/month",
-      description: "Enterprise-grade features for teams and organizations.",
+      description:
+        "Best for teams and organizations",
       features: [
-        "Everything in Premium",
-        "Team collaboration",
-        "Custom branding",
-        "API access",
-        "Priority support",
+        "Everything in Pro",
+        "25 team members",
+        "Team-specific templates",
+        "Administrative dashboard",
         "Usage analytics",
+        "Dedicated account manager",
+        "API access",
+        "Custom integrations",
       ],
-      buttonText: "Contact Sales",
-      highlighted: false,
+      cta: "Contact Sales",
+      popular: false,
     },
   ]
 
   return (
-    <section ref={pricingRef} className="py-20 relative overflow-hidden" id="pricing">
-      {/* Background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="pricing-bg-glow absolute top-1/2 left-1/4 w-[40%] h-[40%] bg-primary/5 rounded-full blur-[150px] opacity-50"></div>
+    <section ref={pricingRef} id="pricing" className="py-20 relative overflow-hidden">
+      {/* Background element */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="pricing-bg-glow-1 absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[150px] opacity-60 animate-glow-slow"></div>
+        <div className="pricing-bg-glow-2 absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-purple-700/5 rounded-full blur-[150px] opacity-50 animate-glow-reverse"></div>
       </div>
-      
+
       <div className="container px-4 mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <h2 ref={titleRef} className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500 animate-gradient">
-            Simple Pricing
+        <div className="mb-16 text-center animate-fadeIn">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-500 to-purple-500 animate-gradient">
+            Choose Your Plan
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose a plan that works for your needs
+            Select a plan that fits your needs. All plans include our core features.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
-            <Card
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {tiers.map((tier, index) => (
+            <div
               key={index}
-              ref={addToCardRefs}
-              onMouseEnter={() => handleMouseEnter(index)}
-              onMouseLeave={() => handleMouseLeave(index)}
-              className={`border relative transition-all duration-300 backdrop-blur-sm
-                ${plan.highlighted ? "border-primary/50 shadow-xl bg-card/70" : "border-white/10 bg-card/50"}
-                ${hoveredCard === index ? "ring-2 ring-primary/20" : ""}
-              `}
+              className={`animate-fadeIn`}
+              style={{ animationDelay: `${index * 100}ms` }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
             >
-              {plan.highlighted && (
-                <div className="popular-badge absolute -top-3 -right-3 bg-primary text-white text-xs px-2 py-1 rounded-md transform rotate-0 shadow-lg">
-                  {plan.badge}
-                </div>
-              )}
-              
-              <CardHeader>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  {plan.period && <span className="text-muted-foreground">{plan.period}</span>}
-                </div>
-                <ul className="space-y-2 mb-6">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="feature-check mr-2 mt-1 flex-shrink-0 rounded-full bg-primary/10 p-1">
-                        <Check className="h-4 w-4 text-primary" />
-                      </span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button 
-                  className={`w-full relative overflow-hidden group ${
-                    plan.highlighted 
-                      ? "bg-gradient-to-r from-primary to-purple-500 hover:from-purple-500 hover:to-primary" 
-                      : ""
-                  }`}
-                  variant={plan.highlighted ? "default" : "outline"}
-                >
-                  <span className="relative z-10">{plan.buttonText}</span>
-                  {plan.highlighted && (
-                    <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
-                  )}
-                </Button>
-              </CardFooter>
-            </Card>
+              <Card
+                className={`h-full border relative transition-all duration-300 ${
+                  tier.popular 
+                    ? "border-primary/50 bg-gradient-to-b from-primary/10 to-transparent shadow-lg" 
+                    : "border-white/10 bg-white/5 backdrop-blur-sm hover:border-primary/30 hover:shadow-md"
+                } ${hoveredIndex === index ? "translate-y-[-8px]" : ""}`}
+              >
+                {tier.popular && (
+                  <div className="absolute top-0 right-0 px-4 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-bl-lg rounded-tr-md">
+                    Most Popular
+                  </div>
+                )}
+                <CardHeader>
+                  <CardTitle className="text-2xl">{tier.name}</CardTitle>
+                  <div className="mt-2 flex items-baseline">
+                    <span className="text-4xl font-extrabold">{tier.price}</span>
+                    {tier.period && <span className="text-muted-foreground ml-2">{tier.period}</span>}
+                  </div>
+                  <CardDescription className="mt-2">{tier.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3 text-sm">
+                    {tier.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center">
+                        <Check className="h-4 w-4 text-primary mr-3" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    variant={tier.popular ? "default" : "outline"}
+                    className={`w-full ${
+                      tier.popular ? "" : "hover:bg-primary hover:text-white"
+                    }`}
+                  >
+                    {tier.cta}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
           ))}
         </div>
       </div>

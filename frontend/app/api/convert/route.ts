@@ -10,12 +10,12 @@ import { Document, Packer, Paragraph, ImageRun, HeadingLevel } from "docx"
  */
 async function generateCodeImage(code: string, options: any = {}) {
   const {
-    fontFamily = "monospace",
-    fontSize = 18,               // Increased font size for better readability
-    lineHeight = 28,             // Increased line height for better spacing
-    backgroundColor = "#171C2E", // Carbon.sh dark blue background
-    textColor = "#FFFFFF",       // Brighter white text for better contrast
-    lineNumberColor = "#6272A4", // More visible line numbers
+    fontFamily = "Courier New, monospace",  // Using Courier New as it's widely available
+    fontSize = 14,                         // Adjusted for better monospace readability
+    lineHeight = 22,                       // Adjusted line height for monospace
+    backgroundColor = "#171C2E",        // Carbon.sh dark blue background
+    textColor = "#FFFFFF",              // Brighter white text for better contrast
+    lineNumberColor = "#6272A4",        // More visible line numbers
     syntaxColors = {
       keyword: "#FF79C6",      // Pink for keywords
       string: "#F1FA8C",       // Yellow for strings
@@ -37,7 +37,7 @@ async function generateCodeImage(code: string, options: any = {}) {
   // Create a temporary canvas context for measurements
   const tmpCanvas = createCanvas(0, 0)
   const tmpCtx = tmpCanvas.getContext("2d")
-  tmpCtx.font = `${fontSize}px ${fontFamily}`
+  tmpCtx.font = `${fontSize}px "${fontFamily}"`
 
   // Compute the width needed for line numbers
   const lineNumbersWidth = tmpCtx.measureText(String(lines.length)).width + 40
@@ -94,7 +94,7 @@ async function generateCodeImage(code: string, options: any = {}) {
   
   // Add "ipynb" text to header like Carbon.sh filename
   ctx.fillStyle = "#6272A4"
-  ctx.font = `${fontSize - 2}px ${fontFamily}`
+  ctx.font = `${fontSize - 2}px "${fontFamily}"`
   ctx.fillText("ipynb", canvasWidth / 2 - 20, headerHeight / 2 + 4)
   
   // Draw window control dots
@@ -111,7 +111,7 @@ async function generateCodeImage(code: string, options: any = {}) {
   // NOTE: Grid pattern removed to improve text visibility
   
   // Set text properties - use a slightly bold font weight for better visibility
-  ctx.font = `bold ${fontSize}px ${fontFamily}`
+  ctx.font = `${fontSize}px "${fontFamily}"`
   ctx.textBaseline = "top"
 
   // Create a vertical separator line between line numbers and code
@@ -288,9 +288,9 @@ async function createDocxFromNotebook(notebook: any): Promise<Buffer> {
       if (code.trim()) {
         // Get the code cell output image
         const imgResult = await generateCodeImage(code, {
-          fontFamily: "monospace",
-          fontSize: 18,
-          lineHeight: 28,
+          fontFamily: "Courier New, monospace",
+          fontSize: 14,
+          lineHeight: 22,
           backgroundColor: "#171C2E",
           textColor: "#FFFFFF",
           lineNumberColor: "#6272A4",
