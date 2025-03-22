@@ -17,7 +17,6 @@
 
 As a student/researcher, I spent countless hours manually capturing screenshots from Jupyter notebooks to include in lab reports and documentation. This tedious, time-consuming process interrupted my workflow and reduced productivity.
 
-**AutoLabDocs** was born from laziness and frustration – the two greatest motivators for innovation.
 
 ## ✨ Solution
 
@@ -74,7 +73,6 @@ AutoLabDocs automates the conversion of Jupyter notebooks (.ipynb files) to beau
 ## 🔮 Future Plans
 
 - **🤖 AI-Generated Summaries** - Adding automatic AI-generated summaries under code cells and visualizations
-- **📱 Mobile App** - Create a mobile version for on-the-go document creation
 - **🌐 API Access** - Provide API endpoints for integration with other tools
 - **👥 Collaboration Features** - Real-time collaboration on document creation
 - **📚 Templates** - More document templates for different academic formats (IEEE, ACM, etc.)
@@ -89,16 +87,6 @@ AutoLabDocs automates the conversion of Jupyter notebooks (.ipynb files) to beau
 - **docx** - Document generation library
 - **PDF-LIB** - PDF generation
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -107,12 +95,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Have questions? Reach out to us:
 
-- Email: [your-email@example.com](mailto:your-email@example.com)
-- Twitter: [@YourTwitterHandle](https://twitter.com/YourTwitterHandle)
+- Email: [adithyahegdek](mailto:adithyahegdek@gmail.com)
+
 
 ---
 
 <div align="center">
-  <p>Built with ❤️ by <a href="https://github.com/yourusername">Your Name</a></p>
+  <p>Built with ❤️ by <a href="https://github.com/hegdeadithyak">Adithya Hegde Kota</a></p>
   <p>Star ⭐ this repository if you found it helpful!</p>
 </div>
