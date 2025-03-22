@@ -304,6 +304,27 @@ async function createDocxFromNotebook(notebook: any): Promise<Buffer> {
   // Generate all paragraphs first
   const documentChildren = [];
   
+  // Add a document title
+  documentChildren.push(
+    new Paragraph({
+      text: "Jupyter Notebook Conversion",
+      heading: HeadingLevel.TITLE,
+      spacing: {
+        after: 300
+      }
+    })
+  );
+  
+  // Add a note about fonts
+  documentChildren.push(
+    new Paragraph({
+      text: "Generated with AutoLabDocs",
+      spacing: {
+        after: 400
+      }
+    })
+  );
+  
   // Convert cells to DOCX content
   for (const cell of notebook.cells) {
     if (cell.cell_type === "markdown") {
