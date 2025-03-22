@@ -8,18 +8,35 @@ import path from 'path';
 import fs from 'fs';
 
 // Register a monospace font that will be available in all environments
-// First, try to load from a public directory if available
 try {
-  // Try to find and register the font
-  const fontPath = path.join(process.cwd(), 'fonts', 'SourceCodePro-Regular.ttf');
-  if (fs.existsSync(fontPath)) {
-    registerFont(fontPath, { family: 'SourceCodePro' });
-    console.log('Source Code Pro font registered successfully in PDF route');
-  } else {
-    console.log('Source Code Pro font file not found in PDF route, will fall back to default monospace');
+  // Try multiple possible font paths - Vercel might place them in different locations
+  const possibleFontPaths = [
+    path.join(process.cwd(), 'fonts', 'SourceCodePro-Regular.ttf'),
+    path.join(process.cwd(), 'public', 'fonts', 'SourceCodePro-Regular.ttf'),
+    path.join(process.cwd(), '.next', 'fonts', 'SourceCodePro-Regular.ttf'),
+    path.join(process.cwd(), '.next', 'public', 'fonts', 'SourceCodePro-Regular.ttf')
+  ];
+  
+  // Try each path until we find the font
+  let fontLoaded = false;
+  for (const fontPath of possibleFontPaths) {
+    if (fs.existsSync(fontPath)) {
+      registerFont(fontPath, { family: 'SourceCodePro' });
+      console.log('Source Code Pro font registered successfully from:', fontPath);
+      fontLoaded = true;
+      break;
+    }
+  }
+  
+  if (!fontLoaded) {
+    // Log more details for debugging
+    console.log('Font file not found in any of the expected locations');
+    console.log('Current working directory:', process.cwd());
+    console.log('Directory contents:', fs.readdirSync(process.cwd()));
+    console.log('Will fall back to system fonts');
   }
 } catch (error) {
-  console.error('Failed to register font in PDF route:', error);
+  console.error('Failed to register font:', error);
   // Continue execution even if font registration fails
 }
 
@@ -27,11 +44,11 @@ try {
  * Generates a PNG buffer of a code snippet rendered with a dark background
  */
 async function generateCodeImage(code: string, options: any = {}) {
-  // Use registered font if available, otherwise fall back to system monospace
-  const fontFamily = options.fontFamily || 'SourceCodePro, monospace';
+  // Use registered font if available, otherwise fall back to system fonts
+  const fontFamily = options.fontFamily || 'SourceCodePro, "Courier New", Courier, monospace';
 
   const {
-    fontSize = 14,                      // Adjusted for better monospace readability
+    fontSize = 14,                      // Adjusted for better readability
     lineHeight = 22,                    // Adjusted line height for monospace
     backgroundColor = "#171C2E",        // Carbon.sh dark blue background
     textColor = "#FFFFFF",              // Brighter white text for better contrast
@@ -325,7 +342,7 @@ async function createPdfFromNotebook(notebookData: any) {
           try {
             // Generate a styled code image with Carbon.sh styling
             const imgResult = await generateCodeImage(code, {
-              fontFamily: "SourceCodePro, monospace",
+              fontFamily: "SourceCodePro, 'Courier New', Courier, monospace",
               fontSize: 14,
               lineHeight: 22,
               backgroundColor: "#171C2E", // Carbon.sh dark blue background

@@ -41,7 +41,18 @@ const nextConfig = {
     });
 
     return config;
-  }
+  },
+  // Ensure the fonts directory is copied to the output directory
+  output: 'standalone',
+  // This copies fonts to the public directory during build
+  async rewrites() {
+    return [
+      {
+        source: '/fonts/:path*',
+        destination: '/fonts/:path*',
+      },
+    ];
+  },
 }
 
 mergeConfig(nextConfig, userConfig)
