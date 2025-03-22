@@ -10,7 +10,7 @@ import { Document, Packer, Paragraph, ImageRun, HeadingLevel } from "docx"
  */
 async function generateCodeImage(code: string, options: any = {}) {
   const {
-    fontFamily = "Courier New, monospace",  // Using Courier New as it's widely available
+    fontFamily = "Arial",  // Using Courier New as it's widely available
     fontSize = 14,                         // Adjusted for better monospace readability
     lineHeight = 22,                       // Adjusted line height for monospace
     backgroundColor = "#171C2E",        // Carbon.sh dark blue background
