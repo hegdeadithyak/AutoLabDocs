@@ -1,3 +1,5 @@
+'use server';
+
 import { type NextRequest, NextResponse } from "next/server"
 import { createCanvas } from "canvas"
 import * as pdfkit from "pdfkit"

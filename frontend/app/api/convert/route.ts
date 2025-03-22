@@ -1,3 +1,5 @@
+'use server';
+
 import { type NextRequest, NextResponse } from "next/server"
 import { createCanvas } from "canvas"
 import { Document, Packer, Paragraph, ImageRun, HeadingLevel } from "docx"
@@ -330,7 +332,8 @@ async function createDocxFromNotebook(notebook: any): Promise<Buffer> {
               transformation: {
                 width: fitWidth,
                 height: fitHeight
-              }
+              },
+              type: 'png'
             })
           ]
         });
