@@ -1,0 +1,15 @@
+{
+  "name": "autolabdocs",
+  "version": "1.0.0",
+  "description": "AutoLabDocs is a powerful tool designed to automate the conversion of Google Colab notebooks into well-formatted DOCX and PDF files. Students and professionals often struggle with manually taking screenshots, pasting code, and formatting lab reports—AutoLabDocs eliminates this hassle with just a few clicks!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^3.1.0",
+    "docx": "^9.3.0"
+  }
+}
